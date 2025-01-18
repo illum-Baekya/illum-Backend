@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
+sgis:
+  api:
+    accessToken:e4ec5eb5-be81-415b-a78d-3c50b0982748
