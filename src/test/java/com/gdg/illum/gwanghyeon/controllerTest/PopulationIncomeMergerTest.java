@@ -1,6 +1,6 @@
 package com.gdg.illum.gwanghyeon.controllerTest;
 
-import com.gdg.illum.gwanghyeon.storage.PopulationIncomeMerger;
+import com.gdg.illum.BusinessDistrict.service.PopulationIncomeMerger;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

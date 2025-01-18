@@ -1,6 +1,5 @@
-package com.gdg.illum.gwanghyeon.storage;
+package com.gdg.illum.BusinessDistrict.service;
 
-import com.gdg.illum.BusinessDistrict.service.AverageIncomeService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
