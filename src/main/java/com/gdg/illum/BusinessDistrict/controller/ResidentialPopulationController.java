@@ -1,6 +1,6 @@
 package com.gdg.illum.BusinessDistrict.controller;
 
-import com.gdg.illum.BusinessDistrict.service.ResidentialPopulationIncomeMerger;
+import com.gdg.illum.BusinessDistrict.service.ResidentialPopulationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,10 +10,10 @@ import java.util.List;
 @RequestMapping("/api/residential-population")
 public class ResidentialPopulationController {
 
-    private final ResidentialPopulationIncomeMerger residentialPopulationIncomeMerger;
+    private final ResidentialPopulationService residentialPopulationIncomeMerger;
 
     @Autowired
-    public ResidentialPopulationController(ResidentialPopulationIncomeMerger residentialPopulationIncomeMerger) {
+    public ResidentialPopulationController(ResidentialPopulationService residentialPopulationIncomeMerger) {
         this.residentialPopulationIncomeMerger = residentialPopulationIncomeMerger;
     }
 
@@ -25,7 +25,7 @@ public class ResidentialPopulationController {
      * @return 병합된 인구 및 소득 정보 리스트
      */
     @GetMapping("/merge")
-    public List<ResidentialPopulationIncomeMerger.MergedRecord> getMergedPopulationIncome(
+    public List<ResidentialPopulationService.MergedRecord> getMergedPopulationIncome(
             @RequestParam String populationFilePath,
             @RequestParam String incomeFilePath
     ) {
