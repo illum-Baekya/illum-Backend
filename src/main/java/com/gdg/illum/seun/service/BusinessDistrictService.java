@@ -1,13 +1,10 @@
 package com.gdg.illum.seun.service;
 
+import com.opencsv.CSVReader;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class BusinessDistrictService {
@@ -16,23 +13,20 @@ public class BusinessDistrictService {
         String filePath = "csv/직장인구.csv";
         List<Map<String, Object>> filteredAreas = new ArrayList<>();
 
-        try {
-            ClassPathResource resource = new ClassPathResource(filePath);
-            BufferedReader br = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+        try (CSVReader csvReader = new CSVReader(new InputStreamReader(new ClassPathResource(filePath).getInputStream()))) {
+            String[] columns;
+            csvReader.readNext();
 
-            String line;
-            boolean isHeader = true;
-
-            while ((line = br.readLine()) != null) {
-                if (isHeader) {
-                    isHeader = false;
-                    continue;
-                }
-
-                String[] columns = line.split(",");
+            while ((columns = csvReader.readNext()) != null) {
                 String admCd = columns[2]; // 행정동 코드
                 String admNm = columns[3]; // 행정동 이름
-                int totalWorkPopulation = Integer.parseInt(columns[4]); // 총 직장인구 수
+                int totalWorkPopulation;
+
+                try {
+                    totalWorkPopulation = Integer.parseInt(columns[4]); // 총 직장인구 수
+                } catch (NumberFormatException e) {
+                    continue;
+                }
 
                 if (admCd.startsWith(admCdPrefix) && totalWorkPopulation > minPopulation) {
                     Map<String, Object> area = new HashMap<>();
@@ -51,5 +45,39 @@ public class BusinessDistrictService {
         }
 
         return filteredAreas;
+    }
+
+    public List<Map<String, Object>> getFilteredFloatingPopulation(String admCdPrefix, int minPopulation) {
+        String filePath = "csv/유동인구.csv";
+
+        try (CSVReader reader = new CSVReader(new InputStreamReader(new ClassPathResource(filePath).getInputStream()))) {
+            List<Map<String, Object>> results = new ArrayList<>();
+            String[] columns;
+            reader.readNext();
+
+            while ((columns = reader.readNext()) != null) {
+                String admCdFull = columns[8].trim(); // ADSTRD_CD (8자리)
+                String admNm = columns[9].trim();    // ADSTRD_NM
+                String populationStr = columns[14].trim(); // PDSTRN_POPLTN_CO (유동인구 수)
+
+                try {
+                    int totalFloatingPopulation = Integer.parseInt(populationStr);
+
+                    if (admCdFull.startsWith(admCdPrefix) && totalFloatingPopulation > minPopulation) {
+                        Map<String, Object> result = new HashMap<>();
+                        result.put("adm_cd", admCdFull);
+                        result.put("adm_nm", admNm);
+                        result.put("total_floating_population", totalFloatingPopulation);
+                        results.add(result);
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("인구수 데이터 변환 실패: " + populationStr);
+                }
+            }
+
+            return results;
+        } catch (Exception e) {
+            throw new RuntimeException("CSV 파일 처리 중 오류가 발생했습니다: " + e.getMessage());
+        }
     }
 }
