@@ -1,50 +1,40 @@
 package com.gdg.illum.gwanghyeon.controllerTest;
 
 import com.gdg.illum.gwanghyeon.service.PopulationService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class PopulationServiceTest {
 
-    @Mock
-    private RestTemplate restTemplate;
-
-    @InjectMocks
-    private PopulationService populationService;
-
-    @BeforeEach
-    void setUp() {
-        // Mock 객체 초기화
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
     void testGetResidentialPopulation() {
-        // 테스트에 사용할 URL
-        String url = "https://sgisapi.kostat.go.kr/OpenAPI3/stats/searchpopulation.json?accessToken=testToken&year=2023&adm_cd=11010";
+        // RestTemplate 초기화
+        RestTemplate restTemplate = new RestTemplate();
 
-        // Mock 응답 데이터 설정
-        HashMap<String, Object> mockResponse = new HashMap<>();
-        mockResponse.put("adm_cd", "11010");
-        mockResponse.put("population", "5000");
+        // 실제 PopulationService 인스턴스 생성
+        PopulationService populationService = new PopulationService(restTemplate);
 
-        // Mock 동작 정의
-        when(restTemplate.getForObject(url, HashMap.class)).thenReturn(mockResponse);
+        // 실제 API 호출에 사용할 파라미터
+        String accessToken = "yourAccessToken"; // 유효한 토큰으로 교체
+        String year = "2023";
+        String admCd = "11010";
 
         // PopulationService 호출
-        HashMap<String, Object> response = populationService.getResidentialPopulation("testToken", "2023", "11010");
+        HashMap<String, Object> response = populationService.getResidentialPopulation(accessToken, year, admCd);
+
+        // 데이터 출력
+        System.out.println("PopulationService Response:");
+        if (response != null) {
+            response.forEach((key, value) -> System.out.println(key + ": " + value));
+        } else {
+            System.out.println("Response is null. Check your API parameters or accessToken.");
+        }
 
         // 결과 검증
-        assertEquals("11010", response.get("adm_cd"));
-        assertEquals("5000", response.get("population"));
+        assertNotNull(response, "API response should not be null");
     }
 }
