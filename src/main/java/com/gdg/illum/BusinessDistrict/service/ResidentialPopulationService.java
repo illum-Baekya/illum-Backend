@@ -1,6 +1,8 @@
 package com.gdg.illum.BusinessDistrict.service;
 
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -106,11 +108,13 @@ public class ResidentialPopulationService {
 
     // 병합 결과를 표현하는 내부 클래스
     public static class MergedRecord {
-        private String year;             // 데이터의 연도
-        private String signguCd;         // SIGNGU_CD (8자리 전체)
-        private String signguName;       // 지역명
-        private int totalPopulation;     // 총 인구수
-        private int averageIncomePrice;  // 평균 소득
+        private String year;
+        private String signguCd;
+        private String signguName;
+        private int totalPopulation;
+
+        @JsonIgnore // <-- 이 애노테이션을 붙이면, JSON 변환시 필드가 제외됨
+        private int averageIncomePrice;
 
         public MergedRecord(String year, String signguCd, String signguName, int totalPopulation, int averageIncomePrice) {
             this.year = year;
@@ -120,18 +124,20 @@ public class ResidentialPopulationService {
             this.averageIncomePrice = averageIncomePrice;
         }
 
-        // Getter / Setter
         public String getYear() { return year; }
         public String getSignguCd() { return signguCd; }
         public String getSignguName() { return signguName; }
         public int getTotalPopulation() { return totalPopulation; }
         public void setTotalPopulation(int totalPopulation) { this.totalPopulation = totalPopulation; }
+
+        // 필요한 로직에서 이 필드는 계속 쓸 수 있습니다.
         public int getAverageIncomePrice() { return averageIncomePrice; }
         public void setAverageIncomePrice(int averageIncomePrice) { this.averageIncomePrice = averageIncomePrice; }
 
         @Override
         public String toString() {
-            return "[" + year + ", " + signguCd + ", " + signguName + ", " + totalPopulation + ", " + averageIncomePrice + "]";
+            // toString()에도 표시하고 싶지 않다면 빼 주세요
+            return "[" + year + ", " + signguCd + ", " + signguName + ", " + totalPopulation + "]";
         }
     }
 }
