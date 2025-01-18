@@ -1,151 +1,100 @@
 package com.gdg.illum.BusinessDistrict.service;
 
-import com.opencsv.CSVReader;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-@Service
+@Service // Spring Service 어노테이션으로 이 클래스가 서비스 역할을 수행함을 명시
 public class ResidentialPopulationService {
 
-    private final String filePath = "src/main/resources/csv/residential_population.csv";
+    // 데이터를 병합하여 List<MergedRecord>로 반환하는 메서드
+    public List<MergedRecord> mergeData(String populationFilePath, String incomeFilePath) {
+        // PopulationStorage와 AverageIncomeStorage 객체를 파일 경로를 기반으로 초기화
+        ResidentialPopulationStorage residentialPopulationStorage = new ResidentialPopulationStorage(populationFilePath);
+        AverageIncomeService incomeStorage = new AverageIncomeService(incomeFilePath);
 
-    /**
-     * 고정된 파일에서 데이터를 읽어와 모든 컬럼을 반환
-     */
-    public List<Map<String, String>> getResidentialPopulation(String year, String admCd) {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            throw new RuntimeException("파일이 존재하지 않습니다: " + file.getAbsolutePath());
+        Map<String, MergedRecord> mergedMap = new HashMap<>(); // SIGNGU_CD별로 데이터를 병합하기 위한 맵 초기화
+
+        // PopulationStorage 데이터를 SIGNGU_CD 기준으로 그룹화
+        for (ResidentialPopulationStorage.PopulationRecord record : residentialPopulationStorage.getPopulationMap().values()) {
+            String signguCd = record.getCode().substring(0, 5); // SIGNGU_CD 추출 (앞 5자리)
+            // 이미 병합된 기록이 있으면 가져오고, 없으면 새로 생성
+            MergedRecord mergedRecord = mergedMap.getOrDefault(signguCd, new MergedRecord(record.getYear(), signguCd, record.getName(), 0, 0));
+            // 해당 지역의 인구수를 누적
+            mergedRecord.setTotalPopulation(mergedRecord.getTotalPopulation() + Integer.parseInt(record.getPopulation()));
+            // 병합된 데이터를 맵에 추가
+            mergedMap.put(signguCd, mergedRecord);
         }
-        return parseCsvFile(file, year, admCd);
+
+        // AverageIncomeStorage 데이터를 SIGNGU_CD 기준으로 추가
+        for (String code : incomeStorage.getEveryCode()) {
+            Integer income = incomeStorage.getAverageIncomeByCode(code); // 해당 지역의 평균 소득 데이터 가져오기
+            String signguCd = code.substring(0, 5); // SIGNGU_CD 추출 (앞 5자리)
+
+            // 병합된 데이터가 이미 존재하면 평균 소득 데이터를 추가
+            if (mergedMap.containsKey(signguCd)) {
+                mergedMap.get(signguCd).setAverageIncomePrice(income);
+            }
+        }
+
+        // 병합된 데이터를 리스트로 변환하여 반환
+        return new ArrayList<>(mergedMap.values());
     }
 
-    /**
-     * 특정 CSV 파일에서 데이터를 읽고 모든 컬럼을 반환
-     */
-    private List<Map<String, String>> parseCsvFile(File file, String year, String admCd) {
-        List<Map<String, String>> rows = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            String headerLine = br.readLine();
-            if (headerLine == null) {
-                throw new RuntimeException("CSV 파일이 비어 있습니다.");
-            }
+    // 병합된 데이터를 표현하는 내부 클래스
+    public static class MergedRecord {
+        private String year; // 데이터의 연도
+        private String signguCd; // SIGNGU_CD
+        private String signguName; // 지역명
+        private int totalPopulation; // 총 인구수
+        private int averageIncomePrice; // 평균 소득
 
-            // 헤더 파싱 및 컬럼 인덱스 매핑
-            String[] headers = headerLine.split("\t");
-            Map<String, Integer> columnIndexMap = getColumnIndexMap(headers);
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] tokens = line.split("\t");
-                if (tokens.length != headers.length) {
-                    continue; // 잘못된 데이터 행은 건너뜀
-                }
-
-                // year와 admCd 필터링
-                if (year.equals(tokens[columnIndexMap.get("STRD_YR_CD")].trim())
-                        && admCd.equals(tokens[columnIndexMap.get("ADSTRD_CD")].trim())) {
-                    Map<String, String> row = new HashMap<>();
-                    for (String header : headers) {
-                        int columnIndex = columnIndexMap.get(header.trim());
-                        row.put(header.trim(), tokens[columnIndex].trim());
-                    }
-                    rows.add(row);
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("CSV 파일 파싱 중 오류 발생: " + file.getName(), e);
-        }
-        return rows;
-    }
-
-    /**
-     * 헤더 배열에서 컬럼 이름과 인덱스 매핑
-     */
-    private Map<String, Integer> getColumnIndexMap(String[] headers) {
-        Map<String, Integer> columnIndexMap = new HashMap<>();
-        for (int i = 0; i < headers.length; i++) {
-            columnIndexMap.put(headers[i].trim(), i);
-        }
-        return columnIndexMap;
-    }
-
-    public List<Map<String, Object>> getFilteredWorkingPopulation(String admCdPrefix, int minPopulation) {
-        String filePath = "csv/직장인구.csv";
-        List<Map<String, Object>> filteredAreas = new ArrayList<>();
-
-        try (CSVReader csvReader = new CSVReader(new InputStreamReader(new ClassPathResource(filePath).getInputStream()))) {
-            String[] columns;
-            csvReader.readNext();
-
-            while ((columns = csvReader.readNext()) != null) {
-                String admCd = columns[2];
-                String admNm = columns[3];
-                int totalWorkPopulation;
-
-                try {
-                    totalWorkPopulation = Integer.parseInt(columns[4]);
-                } catch (NumberFormatException e) {
-                    continue;
-                }
-
-                if (admCd.startsWith(admCdPrefix) && totalWorkPopulation > minPopulation) {
-                    Map<String, Object> area = new HashMap<>();
-                    area.put("adm_cd", admCd);
-                    area.put("adm_nm", admNm);
-                    area.put("total_work_population", totalWorkPopulation);
-                    filteredAreas.add(area);
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("CSV 파일 처리 중 오류가 발생했습니다: " + e.getMessage());
+        // 생성자를 통해 모든 필드를 초기화
+        public MergedRecord(String year, String signguCd, String signguName, int totalPopulation, int averageIncomePrice) {
+            this.year = year;
+            this.signguCd = signguCd;
+            this.signguName = signguName;
+            this.totalPopulation = totalPopulation;
+            this.averageIncomePrice = averageIncomePrice;
         }
 
-        if (filteredAreas.isEmpty()) {
-            throw new RuntimeException("조건에 맞는 데이터가 없습니다.");
+        // Getter 및 Setter 메서드
+        public String getYear() {
+            return year;
         }
 
-        return filteredAreas;
-    }
-
-    public List<Map<String, Object>> getFilteredFloatingPopulation(String admCdPrefix, int minPopulation) {
-        String filePath = "csv/유동인구.csv";
-
-        try (CSVReader reader = new CSVReader(new InputStreamReader(new ClassPathResource(filePath).getInputStream()))) {
-            List<Map<String, Object>> results = new ArrayList<>();
-            String[] columns;
-            reader.readNext();
-
-            while ((columns = reader.readNext()) != null) {
-                String admCdFull = columns[8].trim();
-                String admNm = columns[9].trim();
-                String populationStr = columns[14].trim();
-
-                try {
-                    int totalFloatingPopulation = Integer.parseInt(populationStr);
-
-                    if (admCdFull.startsWith(admCdPrefix) && totalFloatingPopulation > minPopulation) {
-                        Map<String, Object> result = new HashMap<>();
-                        result.put("adm_cd", admCdFull);
-                        result.put("adm_nm", admNm);
-                        result.put("total_floating_population", totalFloatingPopulation);
-                        results.add(result);
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("인구수 데이터 변환 실패: " + populationStr);
-                }
-            }
-
-            return results;
-        } catch (Exception e) {
-            throw new RuntimeException("CSV 파일 처리 중 오류가 발생했습니다: " + e.getMessage());
+        public String getSignguCd() {
+            return signguCd;
         }
+
+        public String getSignguName() {
+            return signguName;
+        }
+
+        public int getTotalPopulation() {
+            return totalPopulation;
+        }
+
+        public void setTotalPopulation(int totalPopulation) {
+            this.totalPopulation = totalPopulation;
+        }
+
+        public int getAverageIncomePrice() {
+            return averageIncomePrice;
+        }
+
+        public void setAverageIncomePrice(int averageIncomePrice) {
+            this.averageIncomePrice = averageIncomePrice;
+        }
+
+        // MergedRecord 객체를 문자열로 표현하는 메서드
+        @Override
+        public String toString() {
+            return "[" + year + ", " + signguCd + ", " + signguName + ", " + totalPopulation + ", " + averageIncomePrice + "]";
+        }
+
     }
 }
