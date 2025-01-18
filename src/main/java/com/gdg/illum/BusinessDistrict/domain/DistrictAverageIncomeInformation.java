@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 @Getter
-public class DistrictInformation {
+public class DistrictAverageIncomeInformation {
 
     @SerializedName("adm_nm")
     private String name;

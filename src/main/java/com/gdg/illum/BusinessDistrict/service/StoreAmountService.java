@@ -1,7 +1,10 @@
 package com.gdg.illum.BusinessDistrict.service;
 
+import com.gdg.illum.BusinessDistrict.domain.DistrictAverageIncomeInformation;
+import com.gdg.illum.BusinessDistrict.domain.DistrictStoreAmountInformation;
 import com.gdg.illum.BusinessDistrict.dto.res.StoreListInfoDto;
 import com.gdg.illum.BusinessDistrict.domain.StoreType;
+import com.gdg.illum.BusinessDistrict.service.utils.CodeUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
@@ -9,6 +12,9 @@ import org.springframework.web.client.RestTemplate;
 import com.google.gson.Gson;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class StoreAmountService {
@@ -19,10 +25,12 @@ public class StoreAmountService {
     private static final String NUM_OF_ROWS = "1";
     private static final String DIV_ID = "signguCd";
     private static final String TYPE = "json";
+    private final AverageIncomeService averageIncomeService;
 
-    public StoreAmountService(@Value("${jun.store-list.request-url}") String url, @Value("${jun.store-list.service-key}") String serviceKey) {
+    public StoreAmountService(@Value("${jun.store-list.request-url}") String url, @Value("${jun.store-list.service-key}") String serviceKey, AverageIncomeService averageIncomeService) {
         this.URL = url;
         this.SERVICE_KEY = serviceKey;
+        this.averageIncomeService = averageIncomeService;
     }
 
     /**
@@ -55,5 +63,31 @@ public class StoreAmountService {
         Gson gson = new Gson();
 
         return gson.fromJson(json, StoreListInfoDto.class).getTotalCount();
+    }
+
+    public List<DistrictStoreAmountInformation> getFilteredDistricts(String codePrefix, int minStoreAmount, StoreType storeType) {
+        // 장소 데이터는 average_income.csv를 통해 받아옴
+        Map<String, DistrictAverageIncomeInformation> informations = averageIncomeService.getDistrictInformations();
+
+        List<DistrictStoreAmountInformation> result = new ArrayList<>();
+
+        informations.entrySet().stream()
+                .filter(entry -> {
+                    String code = entry.getKey();
+                    return CodeUtil.isSamePrefix(code, codePrefix);
+                })
+                .forEach(entry -> {
+                    String code = entry.getKey();
+                    Integer storeAmount = getTotalAmountOfStoreByCode(code, storeType);
+                    if (storeAmount >= minStoreAmount) {
+                        result.add(DistrictStoreAmountInformation.builder()
+                                .code(code)
+                                .name(entry.getValue().getName())
+                                .storeAmount(storeAmount)
+                                .build());
+                    }
+                });
+
+        return result;
     }
 }

@@ -1,6 +1,7 @@
 package com.gdg.illum.BusinessDistrict.service;
 
-import com.gdg.illum.BusinessDistrict.domain.DistrictInformation;
+import com.gdg.illum.BusinessDistrict.domain.DistrictAverageIncomeInformation;
+import com.gdg.illum.BusinessDistrict.service.utils.CodeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ import java.util.*;
 @Component
 public class AverageIncomeService {
 
-    private final Map<String, DistrictInformation> averageIncomes = new HashMap<>();
+    private final Map<String, DistrictAverageIncomeInformation> districtInformations = new HashMap<>();
 
     public AverageIncomeService(@Value("${file.storage.path}") String rootFilePath) {
 
@@ -36,7 +37,7 @@ public class AverageIncomeService {
                 String name = stripDoubleQuotation(lineArr[1]);
                 String code = stripDoubleQuotation(lineArr[2]);
                 Integer averageIncome = Integer.parseInt(stripDoubleQuotation(lineArr[3]));
-                averageIncomes.put(code, DistrictInformation.builder().
+                districtInformations.put(code, DistrictAverageIncomeInformation.builder().
                         name(name)
                         .code(code)
                         .averageIncome(averageIncome)
@@ -49,30 +50,36 @@ public class AverageIncomeService {
     }
 
     public Integer getAverageIncomeByCode(String code) {
-        if (!averageIncomes.containsKey(code)) {
+        if (!districtInformations.containsKey(code)) {
             throw new RuntimeException("해당 시군구 코드의 데이터가 존재하지 않습니다.");
         }
 
-        return averageIncomes.get(code).getAverageIncome();
+        return districtInformations.get(code).getAverageIncome();
     }
 
-    public List<String> getEverySignguCd() {
-        return new ArrayList<>(averageIncomes.keySet());
+    public Map<String, DistrictAverageIncomeInformation> getDistrictInformations() {
+        return Collections.unmodifiableMap(districtInformations);
+    }
+
+    public List<String> getEveryCode() {
+        return new ArrayList<>(districtInformations.keySet());
     }
 
     private String stripDoubleQuotation(String string) {
         return string.substring(1, string.length() - 1);
     }
 
-    public List<DistrictInformation> getFilteredDistricts(String codePrefix, int minAverageIncome) {
-        return averageIncomes.entrySet().stream()
+    public List<DistrictAverageIncomeInformation> getFilteredDistricts(String codePrefix, int minAverageIncome) {
+        return districtInformations.entrySet().stream()
                 .filter(entry -> {
                     String code = entry.getKey();
                     Integer averageIncome = entry.getValue().getAverageIncome();
 
-                    return code.substring(0, 2).equals(codePrefix) && averageIncome >= minAverageIncome;
+                    return CodeUtil.isSamePrefix(code, codePrefix) && averageIncome >= minAverageIncome;
                 })
                 .map(Map.Entry::getValue)
                 .toList();
     }
+
+
 }
