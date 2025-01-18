@@ -115,37 +115,55 @@ public class PopulationService {
         return filteredAreas;
     }
 
-    public List<Map<String, Object>> getFilteredFloatingPopulation(String admCdPrefix, int minPopulation) {
-        String filePath = "csv/유동인구.csv";
+    public List<Map<String, Object>> getFilteredFloatingPopulation2(String admCdPrefix, int minPopulation) {
+        String filePath = "csv/유동인구2.csv"; // CSV 파일 경로
 
-        try (CSVReader reader = new CSVReader(new InputStreamReader(new ClassPathResource(filePath).getInputStream()))) {
+        try (CSVReader reader = new CSVReader(new InputStreamReader(new ClassPathResource(filePath).getInputStream(), StandardCharsets.UTF_8))) {
             List<Map<String, Object>> results = new ArrayList<>();
             String[] columns;
-            reader.readNext();
+
+            reader.readNext(); // 헤더 건너뛰기
 
             while ((columns = reader.readNext()) != null) {
-                String admCdFull = columns[8].trim();
-                String admNm = columns[9].trim();
-                String populationStr = columns[14].trim();
+                // 데이터 검증: 최소 열 길이 확인 (ADMI_CD, ADMI_NM 포함 여부 확인)
+                if (columns.length < 6) { // 최소 6개의 컬럼 필요
+                    System.out.println("유효하지 않은 데이터 행 건너뜀: " + Arrays.toString(columns));
+                    continue;
+                }
+
+                String admCdFull = columns[1].trim(); // ADMI_CD (행정동 코드)
+                String admNm = columns[2].trim();    // ADMI_NM (행정동 이름)
+                String popCountStr = columns[5].trim(); // POP_CNT (유동인구 합계)
 
                 try {
-                    int totalFloatingPopulation = Integer.parseInt(populationStr);
+                    int popCount = parsePopulation(popCountStr); // 유동인구 값 파싱
 
-                    if (admCdFull.startsWith(admCdPrefix) && totalFloatingPopulation > minPopulation) {
+                    if (admCdFull.startsWith(admCdPrefix) && popCount > minPopulation) {
                         Map<String, Object> result = new HashMap<>();
-                        result.put("adm_cd", admCdFull);
-                        result.put("adm_nm", admNm);
-                        result.put("total_floating_population", totalFloatingPopulation);
+                        result.put("adm_cd", admCdFull);    // 8자리 코드
+                        result.put("adm_nm", admNm);        // 행정동 이름
+                        result.put("pop_count", popCount);  // 유동인구 합계
                         results.add(result);
                     }
-                } catch (NumberFormatException e) {
-                    System.out.println("인구수 데이터 변환 실패: " + populationStr);
+                } catch (Exception e) {
+                    System.out.println("인구수 데이터 처리 중 오류 발생: " + Arrays.toString(columns));
                 }
             }
 
             return results;
         } catch (Exception e) {
             throw new RuntimeException("CSV 파일 처리 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    private int parsePopulation(String populationStr) {
+        try {
+            // 숫자로 변환
+            String sanitized = populationStr.replace(",", "").trim();
+            return Integer.parseInt(sanitized);
+        } catch (NumberFormatException e) {
+            // 잘못된 값은 0으로 처리
+            return 0;
         }
     }
 }

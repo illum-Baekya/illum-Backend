@@ -41,7 +41,7 @@ public class PopulationController {
             @RequestParam String admCdPrefix,
             @RequestParam int minPopulation) {
 
-        List<Map<String, Object>> result = populationService.getFilteredFloatingPopulation(admCdPrefix, minPopulation);
+        List<Map<String, Object>> result = populationService.getFilteredFloatingPopulation2(admCdPrefix, minPopulation);
 
         return ResponseEntity.ok(result);
     }
