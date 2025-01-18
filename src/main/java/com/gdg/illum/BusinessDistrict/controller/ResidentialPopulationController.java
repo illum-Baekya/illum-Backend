@@ -1,10 +1,12 @@
 package com.gdg.illum.BusinessDistrict.controller;
 
+import com.gdg.illum.BusinessDistrict.domain.DistrictResidentialPopulationInformation;
 import com.gdg.illum.BusinessDistrict.service.ResidentialPopulationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/residential-population")
@@ -17,16 +19,25 @@ public class ResidentialPopulationController {
         this.residentialPopulationService = residentialPopulationService;
     }
 
-    /**
-     * 병합된 인구 및 소득 데이터를 반환 (최소 인구 필터링 적용)
-     * => 기존 "/merge" → 변경: "/filter/merge"
-     */
     @GetMapping("/filter/merge")
-    public List<ResidentialPopulationService.MergedRecord> getMergedPopulationIncome(
+    public List<DistrictResidentialPopulationInformation> getMergedPopulationIncome(
             @RequestParam(defaultValue = "0") int minPopulation
     ) {
-        // 최소 인구 수 이상의 지역만 필터링
-        return residentialPopulationService.mergeDataWithMinPopulation(minPopulation);
+        // 1) 내부 계산용 MergedRecord 리스트
+        List<ResidentialPopulationService.MergedRecord> mergedRecords =
+                residentialPopulationService.mergeDataWithMinPopulation(minPopulation);
+
+        // 2) DTO 리스트로 변환 (averageIncomePrice는 사용하지 않을 경우 빼 버림)
+        return mergedRecords.stream()
+                .map(m -> DistrictResidentialPopulationInformation.builder()
+                        .year(m.getYear())
+                        .regionCode(m.getSignguCd())
+                        .regionName(m.getSignguName())
+                        .totalPopulation(m.getTotalPopulation())
+                        // .averageIncome(m.getAverageIncomePrice())  // <-- 여기서 안 넣으면 됨
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
 
     /**
