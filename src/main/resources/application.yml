@@ -1,7 +1,6 @@
-api:
-  serviceId: 79e2be83e19b4a90ae21
-  secretKey: 9fb28a28a3114f79b3be
 file:
+  storage2:
+    path: src/main/java/com/gdg/illum/gwanghyeon/files
   storage:
     path: src/main/java/com/gdg/illum/jun/files
 

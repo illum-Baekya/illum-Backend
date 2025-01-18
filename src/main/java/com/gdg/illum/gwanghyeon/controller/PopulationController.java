@@ -4,7 +4,8 @@ import com.gdg.illum.gwanghyeon.service.PopulationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/population")
@@ -18,9 +19,10 @@ public class PopulationController {
     }
 
     @GetMapping
-    public HashMap<String, Object> getResidentialPopulation(
+    public List<Map<String, String>> getResidentialPopulation(
             @RequestParam String year,
-            @RequestParam String admCd) {
+            @RequestParam String admCd
+    ) {
         return populationService.getResidentialPopulation(year, admCd);
     }
 }

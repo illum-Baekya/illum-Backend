@@ -11,6 +11,7 @@ public class AccessTokenService {
 
     private final RestTemplate restTemplate;
 
+
     @Value("${api.serviceId}")
     private String serviceId;
 
@@ -23,8 +24,12 @@ public class AccessTokenService {
     private String accessToken;
     private long accessTimeout;
 
+
+
+
     public AccessTokenService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
+
     }
 
     public String getAccessToken() {
@@ -36,6 +41,7 @@ public class AccessTokenService {
 
     private void refreshAccessToken() {
         String url = String.format("%s?consumer_key=%s&consumer_secret=%s", authUrl, serviceId, secretKey);
+        System.out.println("Generated URL: " + url);
 
         try {
             HashMap<String, Object> response = restTemplate.getForObject(url, HashMap.class);
@@ -49,4 +55,6 @@ public class AccessTokenService {
             throw new RuntimeException("Error while refreshing access token: " + e.getMessage(), e);
         }
     }
+
+
 }
