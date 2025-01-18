@@ -1,3 +1,13 @@
 api:
   serviceId: 79e2be83e19b4a90ae21
   secretKey: 9fb28a28a3114f79b3be
+file:
+  storage:
+    path: src/main/java/com/gdg/illum/jun/files
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/younghan
+    username: younghan
+    password: younghan
+    driver-class-name: com.mysql.cj.jdbc.Driver
