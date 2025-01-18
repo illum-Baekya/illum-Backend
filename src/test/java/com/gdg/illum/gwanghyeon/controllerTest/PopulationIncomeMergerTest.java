@@ -10,8 +10,8 @@ class PopulationIncomeMergerTest {
     @Test
     void testMergeData() {
         // 파일 경로 지정
-        String populationFilePath = "src/main/java/com/gdg/illum/gwanghyeon/files/residential_population.csv";
-        String incomeFilePath = "src/main/java/com/gdg/illum/jun/files/average_income.csv";
+        String populationFilePath = "src/main/resources/csv/residential_population.csv";
+        String incomeFilePath = "src/main/resources/csv/average_income.csv";
 
         // PopulationIncomeMerger 인스턴스 생성
         PopulationIncomeMerger merger = new PopulationIncomeMerger();
