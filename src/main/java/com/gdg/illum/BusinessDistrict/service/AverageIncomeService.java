@@ -22,7 +22,7 @@ public class AverageIncomeService {
 
     public AverageIncomeService(@Value("${file.storage.path}") String rootFilePath) {
 
-        String filePath = rootFilePath + "\\average_income.csv";
+        String filePath = rootFilePath + "/average_income.csv";
 
         try {
             File file = new File(filePath);
