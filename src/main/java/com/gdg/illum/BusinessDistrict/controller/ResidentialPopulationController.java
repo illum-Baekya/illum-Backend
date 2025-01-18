@@ -10,24 +10,26 @@ import java.util.List;
 @RequestMapping("/api/residential-population")
 public class ResidentialPopulationController {
 
-    private final ResidentialPopulationService residentialPopulationService;
+    private final ResidentialPopulationService residentialPopulationIncomeMerger;
 
     @Autowired
-    public ResidentialPopulationController(ResidentialPopulationService residentialPopulationService) {
-        this.residentialPopulationService = residentialPopulationService;
+    public ResidentialPopulationController(ResidentialPopulationService residentialPopulationIncomeMerger) {
+        this.residentialPopulationIncomeMerger = residentialPopulationIncomeMerger;
     }
 
     /**
-     * 병합된 인구 및 소득 데이터를 반환 (최소 인구 필터링 적용)
+     * 병합된 인구 및 소득 데이터를 반환
      *
-     * @param minPopulation 최소 인구 수 (필터링)
+     * @param populationFilePath 인구 데이터 파일 경로
+     * @param incomeFilePath     소득 데이터 파일 경로
      * @return 병합된 인구 및 소득 정보 리스트
      */
     @GetMapping("/merge")
     public List<ResidentialPopulationService.MergedRecord> getMergedPopulationIncome(
-            @RequestParam(defaultValue = "0") int minPopulation
+            @RequestParam String populationFilePath,
+            @RequestParam String incomeFilePath
     ) {
-        // 최소 인구 수 이상의 지역만 필터링
-        return residentialPopulationService.mergeDataWithMinPopulation(minPopulation);
+        // PopulationIncomeMerger를 통해 병합된 데이터를 반환
+        return residentialPopulationIncomeMerger.mergeData(populationFilePath, incomeFilePath);
     }
 }
