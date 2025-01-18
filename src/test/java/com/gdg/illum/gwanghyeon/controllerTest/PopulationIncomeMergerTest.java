@@ -1,6 +1,6 @@
 package com.gdg.illum.gwanghyeon.controllerTest;
 
-import com.gdg.illum.BusinessDistrict.service.PopulationIncomeMerger;
+import com.gdg.illum.BusinessDistrict.service.ResidentialPopulationIncomeMerger;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,10 +14,10 @@ class PopulationIncomeMergerTest {
         String incomeFilePath = "src/main/resources/csv/average_income.csv";
 
         // PopulationIncomeMerger 인스턴스 생성
-        PopulationIncomeMerger merger = new PopulationIncomeMerger();
+        ResidentialPopulationIncomeMerger merger = new ResidentialPopulationIncomeMerger();
 
         // mergeData 호출
-        List<PopulationIncomeMerger.MergedRecord> mergedData = merger.mergeData(populationFilePath, incomeFilePath);
+        List<ResidentialPopulationIncomeMerger.MergedRecord> mergedData = merger.mergeData(populationFilePath, incomeFilePath);
 
         // 결과 출력
         mergedData.forEach(System.out::println);
