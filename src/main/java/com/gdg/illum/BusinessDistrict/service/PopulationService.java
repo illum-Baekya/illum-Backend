@@ -1,4 +1,4 @@
-package com.gdg.illum.gwanghyeon.service;
+package com.gdg.illum.BusinessDistrict.service;
 
 import org.springframework.stereotype.Service;
 
