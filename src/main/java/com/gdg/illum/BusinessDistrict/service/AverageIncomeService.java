@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Slf4j
 @Component
@@ -70,15 +71,21 @@ public class AverageIncomeService {
     }
 
     public List<DistrictAverageIncomeInformation> getFilteredDistricts(String codePrefix, int minAverageIncome) {
-        return districtInformations.entrySet().stream()
-                .filter(entry -> {
-                    String code = entry.getKey();
-                    Integer averageIncome = entry.getValue().getAverageIncome();
+        Stream<Map.Entry<String, DistrictAverageIncomeInformation>> stream = districtInformations.entrySet().stream();
 
-                    return CodeUtil.isSamePrefix(code, codePrefix) && averageIncome >= minAverageIncome;
-                })
-                .map(Map.Entry::getValue)
-                .toList();
+        if (codePrefix != null) {
+            stream = stream.filter(entry -> {
+                String code = entry.getKey();
+
+                return CodeUtil.isSamePrefix(code, codePrefix);
+            });
+        }
+
+        return stream.filter(entry -> {
+            Integer averageIncome = entry.getValue().getAverageIncome();
+
+            return averageIncome >= minAverageIncome;
+        }).map(Map.Entry::getValue).toList();
     }
 
 
