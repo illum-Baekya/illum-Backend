@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 // 파일에서 인구 데이터를 읽어와 저장하는 클래스
-public class PopulationStorage {
+public class ResidentialPopulationStorage {
 
     private final Map<String, PopulationRecord> populationMap = new HashMap<>(); // 지역 코드와 PopulationRecord를 저장하는 맵
 
     // 생성자: 파일 경로를 받아 인구 데이터를 읽어와 populationMap에 저장
-    public PopulationStorage(String filePath) {
+    public ResidentialPopulationStorage(String filePath) {
         try (BufferedReader br = new BufferedReader(new FileReader(new File(filePath), StandardCharsets.UTF_8))) { // 파일을 읽기 위한 BufferedReader 생성
             String line;
             boolean firstLine = true; // 파일의 첫 번째 줄(헤더)을 건너뛰기 위한 플래그
