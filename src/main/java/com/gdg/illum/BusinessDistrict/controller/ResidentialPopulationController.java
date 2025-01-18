@@ -19,11 +19,9 @@ public class ResidentialPopulationController {
 
     /**
      * 병합된 인구 및 소득 데이터를 반환 (최소 인구 필터링 적용)
-     *
-     * @param minPopulation 최소 인구 수 (필터링)
-     * @return 병합된 인구 및 소득 정보 리스트
+     * => 기존 "/merge" → 변경: "/filter/merge"
      */
-    @GetMapping("/merge")
+    @GetMapping("/filter/merge")
     public List<ResidentialPopulationService.MergedRecord> getMergedPopulationIncome(
             @RequestParam(defaultValue = "0") int minPopulation
     ) {
@@ -33,8 +31,9 @@ public class ResidentialPopulationController {
 
     /**
      * 특정 동 코드(signguCd)의 총 인구수를 반환
+     * => 기존 "/total-population" → 변경: "/filter/total-population"
      */
-    @GetMapping("/total-population")
+    @GetMapping("/filter/total-population")
     public int getTotalPopulation(@RequestParam String signguCd) {
         return residentialPopulationService.getTotalPopulationByCode(signguCd);
     }
