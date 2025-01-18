@@ -46,8 +46,8 @@ public class PopulationController {
 
     @GetMapping("/filter/floating_population")
     public ResponseEntity<List<Map<String, Object>>> filterFloatingPopulation(
-            @RequestParam String admCdPrefix,
-            @RequestParam int minPopulation) {
+            @RequestParam(required = false) String admCdPrefix,
+            @RequestParam(required = false) int minPopulation) {
 
         List<Map<String, Object>> result = populationService.getFilteredFloatingPopulation(admCdPrefix, minPopulation);
 

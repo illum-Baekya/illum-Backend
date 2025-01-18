@@ -3,6 +3,7 @@ package com.gdg.illum.BusinessDistrict.service;
 import com.opencsv.CSVReader;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -126,7 +127,7 @@ public class PopulationService {
                 try {
                     int popCount = parsePopulation(popCountStr);
 
-                    if (admCdFull.startsWith(admCdPrefix) && popCount > minPopulation) {
+                    if ((!StringUtils.hasText(admCdPrefix) || admCdFull.startsWith(admCdPrefix)) && popCount > minPopulation) {
                         Map<String, Object> result = new HashMap<>();
                         result.put("adm_cd", admCdFull);
                         result.put("adm_nm", admNm);
