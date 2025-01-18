@@ -21,7 +21,7 @@ public class AverageIncomeController {
     @GetMapping("/filter/income")
     public ResponseEntity<List<DistrictAverageIncomeInformation>> filterAverageIncome(
             @RequestParam(required = false) String admCdPrefix,
-            @RequestParam int minAverageIncome) {
+            @RequestParam(defaultValue = "0") int minAverageIncome) {
         List<DistrictAverageIncomeInformation> result = averageIncomeService.getFilteredDistricts(admCdPrefix, minAverageIncome);
 
         return ResponseEntity.ok(result);

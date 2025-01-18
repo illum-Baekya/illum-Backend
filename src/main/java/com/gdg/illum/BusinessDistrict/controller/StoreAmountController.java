@@ -22,7 +22,7 @@ public class StoreAmountController {
     @GetMapping("/filter/amount")
     public ResponseEntity<List<DistrictStoreAmountInformation>> filterAverageIncome(
             @RequestParam String admCdPrefix,
-            @RequestParam int minStoreAmount,
+            @RequestParam(defaultValue = "0") int minStoreAmount,
             @RequestParam(required = false) StoreType storeType) {
         List<DistrictStoreAmountInformation> result = storeAmountService.getFilteredDistricts(admCdPrefix, minStoreAmount, storeType);
 
