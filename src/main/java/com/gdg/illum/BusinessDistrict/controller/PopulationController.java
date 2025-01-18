@@ -1,38 +1,28 @@
 package com.gdg.illum.BusinessDistrict.controller;
 
-import com.gdg.illum.BusinessDistrict.service.PopulationService;
+import com.gdg.illum.gwanghyeon.service.PopulationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/business_district")
+@RequestMapping("/api/population")
 public class PopulationController {
 
+    private final PopulationService populationService;
+
     @Autowired
-    private PopulationService populationService;
-
-    @GetMapping("/filter/working_population")
-    public ResponseEntity<List<Map<String, Object>>> filterWorkingPopulation(
-            @RequestParam String admCdPrefix,
-            @RequestParam int minPopulation) {
-
-        List<Map<String, Object>> result = populationService.getFilteredWorkingPopulation(admCdPrefix, minPopulation);
-        return ResponseEntity.ok(result);
+    public PopulationController(PopulationService populationService) {
+        this.populationService = populationService;
     }
 
-    @GetMapping("/filter/floating_population")
-    public ResponseEntity<List<Map<String, Object>>> filterFloatingPopulation(
-            @RequestParam String admCdPrefix,
-            @RequestParam int minPopulation) {
-
-        List<Map<String, Object>> result = populationService.getFilteredFloatingPopulation(admCdPrefix, minPopulation);
-
-        return ResponseEntity.ok(result);
+    @GetMapping
+    public List<Map<String, String>> getResidentialPopulation(
+            @RequestParam String year,
+            @RequestParam String admCd
+    ) {
+        return populationService.getResidentialPopulation(year, admCd);
     }
 }
