@@ -18,12 +18,12 @@ public class BusinessDistrictService {
             csvReader.readNext();
 
             while ((columns = csvReader.readNext()) != null) {
-                String admCd = columns[2]; // 행정동 코드
-                String admNm = columns[3]; // 행정동 이름
+                String admCd = columns[2];
+                String admNm = columns[3];
                 int totalWorkPopulation;
 
                 try {
-                    totalWorkPopulation = Integer.parseInt(columns[4]); // 총 직장인구 수
+                    totalWorkPopulation = Integer.parseInt(columns[4]);
                 } catch (NumberFormatException e) {
                     continue;
                 }
@@ -56,9 +56,9 @@ public class BusinessDistrictService {
             reader.readNext();
 
             while ((columns = reader.readNext()) != null) {
-                String admCdFull = columns[8].trim(); // ADSTRD_CD (8자리)
-                String admNm = columns[9].trim();    // ADSTRD_NM
-                String populationStr = columns[14].trim(); // PDSTRN_POPLTN_CO (유동인구 수)
+                String admCdFull = columns[8].trim();
+                String admNm = columns[9].trim();
+                String populationStr = columns[14].trim();
 
                 try {
                     int totalFloatingPopulation = Integer.parseInt(populationStr);
