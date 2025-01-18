@@ -1,6 +1,6 @@
 package com.gdg.illum.BusinessDistrict.controller;
 
-import com.gdg.illum.gwanghyeon.service.PopulationService;
+import com.gdg.illum.BusinessDistrict.service.PopulationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
