@@ -39,6 +39,11 @@ public class PopulationController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/working")
+    public ResponseEntity<List<Map<String, Object>>> getAllWorkingPopulation() {
+        return ResponseEntity.ok(populationService.getAllWorkingPopulation());
+    }
+
     @GetMapping("/filter/floating_population")
     public ResponseEntity<List<Map<String, Object>>> filterFloatingPopulation(
             @RequestParam String admCdPrefix,
@@ -47,5 +52,10 @@ public class PopulationController {
         List<Map<String, Object>> result = populationService.getFilteredFloatingPopulation(admCdPrefix, minPopulation);
 
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/floating")
+    public ResponseEntity<List<Map<String, Object>>> getAllFloatingPopulation() {
+        return ResponseEntity.ok(populationService.getAllFloatingPopulation());
     }
 }
