@@ -1,4 +1,4 @@
-package com.gdg.illum.jun.store;
+package com.gdg.illum.BusinessDistrict.domain;
 
 public enum StoreType {
     NULL("NULL") {

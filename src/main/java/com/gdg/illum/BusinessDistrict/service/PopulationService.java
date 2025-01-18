@@ -1,4 +1,4 @@
-package com.gdg.illum.seun.service;
+package com.gdg.illum.BusinessDistrict.service;
 
 import com.opencsv.CSVReader;
 import org.springframework.core.io.ClassPathResource;
@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 @Service
-public class BusinessDistrictService {
+public class PopulationService {
 
     public List<Map<String, Object>> getFilteredWorkingPopulation(String admCdPrefix, int minPopulation) {
         String filePath = "csv/직장인구.csv";

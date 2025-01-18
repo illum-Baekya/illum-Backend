@@ -1,5 +1,6 @@
 package com.gdg.illum.jun.income;
 
+import com.gdg.illum.BusinessDistrict.service.AverageIncomeService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

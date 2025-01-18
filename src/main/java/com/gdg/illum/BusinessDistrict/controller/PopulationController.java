@@ -1,6 +1,6 @@
-package com.gdg.illum.seun.controller;
+package com.gdg.illum.BusinessDistrict.controller;
 
-import com.gdg.illum.seun.service.BusinessDistrictService;
+import com.gdg.illum.BusinessDistrict.service.PopulationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,17 +12,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/business_district")
-public class BusinessDistrictController {
+public class PopulationController {
 
     @Autowired
-    private BusinessDistrictService businessDistrictService;
+    private PopulationService populationService;
 
     @GetMapping("/filter/working_population")
     public ResponseEntity<List<Map<String, Object>>> filterWorkingPopulation(
             @RequestParam String admCdPrefix,
             @RequestParam int minPopulation) {
 
-        List<Map<String, Object>> result = businessDistrictService.getFilteredWorkingPopulation(admCdPrefix, minPopulation);
+        List<Map<String, Object>> result = populationService.getFilteredWorkingPopulation(admCdPrefix, minPopulation);
         return ResponseEntity.ok(result);
     }
 
@@ -31,7 +31,7 @@ public class BusinessDistrictController {
             @RequestParam String admCdPrefix,
             @RequestParam int minPopulation) {
 
-        List<Map<String, Object>> result = businessDistrictService.getFilteredFloatingPopulation(admCdPrefix, minPopulation);
+        List<Map<String, Object>> result = populationService.getFilteredFloatingPopulation(admCdPrefix, minPopulation);
 
         return ResponseEntity.ok(result);
     }

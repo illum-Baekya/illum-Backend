@@ -1,5 +1,7 @@
-package com.gdg.illum.jun.store;
+package com.gdg.illum.BusinessDistrict.service;
 
+import com.gdg.illum.BusinessDistrict.dto.res.StoreListInfoDto;
+import com.gdg.illum.BusinessDistrict.domain.StoreType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
