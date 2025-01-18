@@ -3,7 +3,6 @@ package com.gdg.illum.BusinessDistrict.service;
 import com.opencsv.CSVReader;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -115,34 +114,33 @@ public class PopulationService {
         return filteredAreas;
     }
 
-    public List<Map<String, Object>> getFilteredFloatingPopulation2(String admCdPrefix, int minPopulation) {
-        String filePath = "csv/유동인구2.csv"; // CSV 파일 경로
+    public List<Map<String, Object>> getFilteredFloatingPopulation(String admCdPrefix, int minPopulation) {
+        String filePath = "csv/유동인구2.csv";
 
         try (CSVReader reader = new CSVReader(new InputStreamReader(new ClassPathResource(filePath).getInputStream(), StandardCharsets.UTF_8))) {
             List<Map<String, Object>> results = new ArrayList<>();
             String[] columns;
 
-            reader.readNext(); // 헤더 건너뛰기
+            reader.readNext();
 
             while ((columns = reader.readNext()) != null) {
-                // 데이터 검증: 최소 열 길이 확인 (ADMI_CD, ADMI_NM 포함 여부 확인)
-                if (columns.length < 6) { // 최소 6개의 컬럼 필요
+                if (columns.length < 6) {
                     System.out.println("유효하지 않은 데이터 행 건너뜀: " + Arrays.toString(columns));
                     continue;
                 }
 
-                String admCdFull = columns[1].trim(); // ADMI_CD (행정동 코드)
-                String admNm = columns[2].trim();    // ADMI_NM (행정동 이름)
-                String popCountStr = columns[5].trim(); // POP_CNT (유동인구 합계)
+                String admCdFull = columns[1].trim();
+                String admNm = columns[2].trim();
+                String popCountStr = columns[5].trim();
 
                 try {
-                    int popCount = parsePopulation(popCountStr); // 유동인구 값 파싱
+                    int popCount = parsePopulation(popCountStr);
 
                     if (admCdFull.startsWith(admCdPrefix) && popCount > minPopulation) {
                         Map<String, Object> result = new HashMap<>();
-                        result.put("adm_cd", admCdFull);    // 8자리 코드
-                        result.put("adm_nm", admNm);        // 행정동 이름
-                        result.put("pop_count", popCount);  // 유동인구 합계
+                        result.put("adm_cd", admCdFull);
+                        result.put("adm_nm", admNm);
+                        result.put("pop_count", popCount);
                         results.add(result);
                     }
                 } catch (Exception e) {
@@ -158,11 +156,9 @@ public class PopulationService {
 
     private int parsePopulation(String populationStr) {
         try {
-            // 숫자로 변환
             String sanitized = populationStr.replace(",", "").trim();
             return Integer.parseInt(sanitized);
         } catch (NumberFormatException e) {
-            // 잘못된 값은 0으로 처리
             return 0;
         }
     }
