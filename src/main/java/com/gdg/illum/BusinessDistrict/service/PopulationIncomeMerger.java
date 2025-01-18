@@ -30,7 +30,7 @@ public class PopulationIncomeMerger {
         }
 
         // AverageIncomeStorage 데이터를 SIGNGU_CD 기준으로 추가
-        for (String code : incomeStorage.getEverySignguCd()) {
+        for (String code : incomeStorage.getEveryCode()) {
             Integer income = incomeStorage.getAverageIncomeByCode(code); // 해당 지역의 평균 소득 데이터 가져오기
             String signguCd = code.substring(0, 5); // SIGNGU_CD 추출 (앞 5자리)
 
