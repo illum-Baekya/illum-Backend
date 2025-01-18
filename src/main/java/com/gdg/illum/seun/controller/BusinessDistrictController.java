@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -20,16 +18,12 @@ public class BusinessDistrictController {
     @Autowired
     private BusinessDistrictService businessDistrictService;
 
-    @GetMapping("/filter/floating_population")
-    public ResponseEntity<?> getFilteredPopulation(
-            @RequestParam String admCd,
+    @GetMapping("/filter/working_population")
+    public ResponseEntity<List<Map<String, Object>>> filterBusinessDistricts(
+            @RequestParam String admCdPrefix,
             @RequestParam int minPopulation) {
-        try {
-            List<Map<String, Object>> result = businessDistrictService.getFilteredAreas(admCd, minPopulation);
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonMap("error", e.getMessage()));
-        }
+
+        List<Map<String, Object>> result = businessDistrictService.getFilteredAreas(admCdPrefix, minPopulation);
+        return ResponseEntity.ok(result);
     }
 }
