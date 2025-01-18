@@ -152,4 +152,69 @@ public class PopulationService {
             return 0;
         }
     }
+
+    public List<Map<String, Object>> getAllWorkingPopulation() {
+        String filePath = "csv/직장인구.csv";
+        List<Map<String, Object>> allWorkingPopulation = new ArrayList<>();
+
+        try (CSVReader csvReader = new CSVReader(new InputStreamReader(new ClassPathResource(filePath).getInputStream()))) {
+            String[] columns;
+            csvReader.readNext(); // Skip header row
+
+            while ((columns = csvReader.readNext()) != null) {
+                try {
+                    String admCd = columns[2];
+                    String admNm = columns[3];
+                    int totalWorkPopulation = Integer.parseInt(columns[4]);
+
+                    Map<String, Object> area = new HashMap<>();
+                    area.put("adm_cd", admCd);
+                    area.put("adm_nm", admNm);
+                    area.put("total_work_population", totalWorkPopulation);
+                    allWorkingPopulation.add(area);
+                } catch (Exception e) {
+                    System.out.println("데이터 처리 중 오류 발생: " + Arrays.toString(columns));
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("CSV 파일 처리 중 오류가 발생했습니다: " + e.getMessage());
+        }
+
+        return allWorkingPopulation;
+    }
+
+    public List<Map<String, Object>> getAllFloatingPopulation() {
+        String filePath = "csv/유동인구.csv";
+        List<Map<String, Object>> allFloatingPopulation = new ArrayList<>();
+
+        try (CSVReader csvReader = new CSVReader(new InputStreamReader(new ClassPathResource(filePath).getInputStream(), StandardCharsets.UTF_8))) {
+            String[] columns;
+            csvReader.readNext(); // Skip header row
+
+            while ((columns = csvReader.readNext()) != null) {
+                if (columns.length < 6) {
+                    System.out.println("유효하지 않은 데이터 행 건너뜀: " + Arrays.toString(columns));
+                    continue;
+                }
+
+                try {
+                    String admCd = columns[1];
+                    String admNm = columns[2];
+                    int popCount = Integer.parseInt(columns[5].replace(",", "").trim());
+
+                    Map<String, Object> area = new HashMap<>();
+                    area.put("adm_cd", admCd);
+                    area.put("adm_nm", admNm);
+                    area.put("pop_count", popCount);
+                    allFloatingPopulation.add(area);
+                } catch (Exception e) {
+                    System.out.println("데이터 처리 중 오류 발생: " + Arrays.toString(columns));
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("CSV 파일 처리 중 오류가 발생했습니다: " + e.getMessage());
+        }
+
+        return allFloatingPopulation;
+    }
 }
