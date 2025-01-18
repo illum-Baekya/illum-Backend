@@ -1,4 +1,6 @@
 file:
+  storage2:
+    path: src/main/java/com/gdg/illum/gwanghyeon/files
   storage:
     path: ${FILE_PATH}
 
