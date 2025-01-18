@@ -105,7 +105,7 @@ public class PopulationService {
     }
 
     public List<Map<String, Object>> getFilteredFloatingPopulation(String admCdPrefix, int minPopulation) {
-        String filePath = "csv/유동인구2.csv";
+        String filePath = "csv/유동인구.csv";
 
         try (CSVReader reader = new CSVReader(new InputStreamReader(new ClassPathResource(filePath).getInputStream(), StandardCharsets.UTF_8))) {
             List<Map<String, Object>> results = new ArrayList<>();
