@@ -12,6 +12,36 @@ public class ResidentialPopulationService {
     private final String populationFilePath = "src/main/resources/csv/residential_population.csv";
     private final String incomeFilePath = "src/main/resources/csv/average_income.csv";
 
+
+    /**
+     * 특정 동(행정구역) 코드로 총 인구수를 반환
+     * @param signguCd 8자리 코드
+     * @return 해당 동의 totalPopulation (없으면 0)
+     */
+    public int getTotalPopulationByCode(String signguCd) {
+        // 1) 모든 병합 데이터 로드
+        List<MergedRecord> mergedRecords = mergeData();
+
+        // 2) 필요한 동 찾기
+        //    방법 1) for-loop
+        /*
+        for (MergedRecord record : mergedRecords) {
+            if (record.getSignguCd().equals(signguCd)) {
+                return record.getTotalPopulation();
+            }
+        }
+        return 0; // 못 찾으면 0
+        */
+
+        //    방법 2) Stream 이용
+        return mergedRecords.stream()
+                .filter(r -> r.getSignguCd().equals(signguCd))
+                .mapToInt(MergedRecord::getTotalPopulation)
+                .findFirst()
+                .orElse(0);
+    }
+
+
     /**
      * 병합된 데이터를 반환
      */
