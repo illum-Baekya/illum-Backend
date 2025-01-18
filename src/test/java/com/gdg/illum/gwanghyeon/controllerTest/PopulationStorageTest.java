@@ -1,6 +1,6 @@
 package com.gdg.illum.gwanghyeon.controllerTest;
 
-import com.gdg.illum.gwanghyeon.storage.PopulationStorage;
+import com.gdg.illum.BusinessDistrict.service.PopulationStorage;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;

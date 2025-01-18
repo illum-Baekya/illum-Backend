@@ -1,6 +1,5 @@
-package com.gdg.illum.gwanghyeon.storage;
+package com.gdg.illum.BusinessDistrict.service;
 
-import com.gdg.illum.jun.income.AverageIncomeStorage;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,7 +14,7 @@ public class PopulationIncomeMerger {
     public List<MergedRecord> mergeData(String populationFilePath, String incomeFilePath) {
         // PopulationStorage와 AverageIncomeStorage 객체를 파일 경로를 기반으로 초기화
         PopulationStorage populationStorage = new PopulationStorage(populationFilePath);
-        AverageIncomeStorage incomeStorage = new AverageIncomeStorage(incomeFilePath);
+        AverageIncomeService incomeStorage = new AverageIncomeService(incomeFilePath);
 
         Map<String, MergedRecord> mergedMap = new HashMap<>(); // SIGNGU_CD별로 데이터를 병합하기 위한 맵 초기화
 
