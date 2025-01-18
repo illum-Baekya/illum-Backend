@@ -2,54 +2,82 @@ package com.gdg.illum.BusinessDistrict.service;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class ResidentialPopulationService {
 
+    // 파일 경로 하드코딩
     private final String populationFilePath = "src/main/resources/csv/residential_population.csv";
     private final String incomeFilePath = "src/main/resources/csv/average_income.csv";
 
+    /**
+     * 병합된 데이터를 반환
+     */
     public List<MergedRecord> mergeData() {
+        // 인구/소득 CSV 읽기
         ResidentialPopulationStorage residentialPopulationStorage = new ResidentialPopulationStorage(populationFilePath);
         AverageIncomeService incomeStorage = new AverageIncomeService(incomeFilePath);
 
         Map<String, MergedRecord> mergedMap = new HashMap<>();
 
+        // 인구 데이터 병합
         for (ResidentialPopulationStorage.PopulationRecord record : residentialPopulationStorage.getPopulationMap().values()) {
-            String signguCd = record.getCode().substring(0, 5);
-            MergedRecord mergedRecord = mergedMap.getOrDefault(signguCd,
-                    new MergedRecord(record.getYear(), signguCd, record.getName(), 0, 0));
-            mergedRecord.setTotalPopulation(mergedRecord.getTotalPopulation() + Integer.parseInt(record.getPopulation()));
-            mergedMap.put(signguCd, mergedRecord);
+            // 1) 전체 코드(8자리 등)를 그대로 사용
+            String fullCode = record.getCode();
+
+            // 이미 존재하면 가져오고, 없으면 새로 생성
+            MergedRecord mergedRecord = mergedMap.getOrDefault(
+                    fullCode,
+                    new MergedRecord(record.getYear(), fullCode, record.getName(), 0, 0)
+            );
+
+            // 해당 지역의 인구를 누적
+            mergedRecord.setTotalPopulation(
+                    mergedRecord.getTotalPopulation() + Integer.parseInt(record.getPopulation())
+            );
+
+            // 맵에 저장
+            mergedMap.put(fullCode, mergedRecord);
         }
 
+        // 소득 데이터 병합
         for (String code : incomeStorage.getEveryCode()) {
-            int income = incomeStorage.getAverageIncomeByCode(code);
-            String signguCd = code.substring(0, 5);
-            if (mergedMap.containsKey(signguCd)) {
-                mergedMap.get(signguCd).setAverageIncomePrice(income);
+            // 2) 소득 코드도 전체 사용
+            String fullCode = code;
+
+            int income = incomeStorage.getAverageIncomeByCode(fullCode);
+
+            // 만약 맵에 해당 코드가 이미 존재한다면 소득 설정
+            if (mergedMap.containsKey(fullCode)) {
+                mergedMap.get(fullCode).setAverageIncomePrice(income);
+            } else {
+                // 혹시 인구 데이터에 없고 소득 데이터만 있는 경우?
+                // 필요하다면 새롭게 추가하거나, 그냥 무시할 수 있음
+                // 여기서는 예시로 무시
             }
         }
 
         return new ArrayList<>(mergedMap.values());
     }
 
+    /**
+     * 최소 인구(minPopulation) 이상의 레코드만 필터링하여 반환
+     */
     public List<MergedRecord> mergeDataWithMinPopulation(int minPopulation) {
         List<MergedRecord> mergedRecords = mergeData();
 
+        // 최소 인구 기준 필터링
         return mergedRecords.stream()
                 .filter(record -> record.getTotalPopulation() >= minPopulation)
                 .collect(Collectors.toList());
     }
 
+    // 병합 결과를 표현하는 내부 클래스
     public static class MergedRecord {
         private String year;             // 데이터의 연도
-        private String signguCd;         // SIGNGU_CD
+        private String signguCd;         // SIGNGU_CD (8자리 전체)
         private String signguName;       // 지역명
         private int totalPopulation;     // 총 인구수
         private int averageIncomePrice;  // 평균 소득
@@ -62,6 +90,7 @@ public class ResidentialPopulationService {
             this.averageIncomePrice = averageIncomePrice;
         }
 
+        // Getter / Setter
         public String getYear() { return year; }
         public String getSignguCd() { return signguCd; }
         public String getSignguName() { return signguName; }
