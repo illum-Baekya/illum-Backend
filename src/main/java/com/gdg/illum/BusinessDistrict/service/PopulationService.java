@@ -86,7 +86,7 @@ public class PopulationService {
                     continue;
                 }
 
-                if (admCd.startsWith(admCdPrefix) && totalWorkPopulation > minPopulation) {
+                if ((!StringUtils.hasText(admCdPrefix) || admCd.startsWith(admCdPrefix)) && totalWorkPopulation > minPopulation) {
                     Map<String, Object> area = new HashMap<>();
                     area.put("adm_cd", admCd);
                     area.put("adm_nm", admNm);

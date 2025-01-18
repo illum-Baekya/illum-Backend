@@ -32,8 +32,11 @@ public class PopulationController {
 
     @GetMapping("/filter/working_population")
     public ResponseEntity<List<Map<String, Object>>> filterWorkingPopulation(
-            @RequestParam String admCdPrefix,
-            @RequestParam int minPopulation) {
+            @RequestParam(required = false) String admCdPrefix,
+            @RequestParam(required = false) Integer minPopulation) {
+        if (minPopulation == null) {
+            minPopulation = 0;
+        }
 
         List<Map<String, Object>> result = populationService.getFilteredWorkingPopulation(admCdPrefix, minPopulation);
         return ResponseEntity.ok(result);
