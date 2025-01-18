@@ -42,6 +42,10 @@ dependencies {
 
     // opencsv
     implementation 'com.opencsv:opencsv:5.7.1'
+
+    // security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 }
 
 tasks.named('test') {
