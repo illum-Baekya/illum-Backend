@@ -19,11 +19,11 @@ public class BusinessDistrictController {
     private BusinessDistrictService businessDistrictService;
 
     @GetMapping("/filter/working_population")
-    public ResponseEntity<List<Map<String, Object>>> filterBusinessDistricts(
+    public ResponseEntity<List<Map<String, Object>>> filterWorkingPopulation(
             @RequestParam String admCdPrefix,
             @RequestParam int minPopulation) {
 
-        List<Map<String, Object>> result = businessDistrictService.getFilteredAreas(admCdPrefix, minPopulation);
+        List<Map<String, Object>> result = businessDistrictService.getFilteredWorkingPopulation(admCdPrefix, minPopulation);
         return ResponseEntity.ok(result);
     }
 }

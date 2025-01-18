@@ -12,7 +12,7 @@ import java.util.Map;
 @Service
 public class BusinessDistrictService {
 
-    public List<Map<String, Object>> getFilteredAreas(String admCdPrefix, int minPopulation) {
+    public List<Map<String, Object>> getFilteredWorkingPopulation(String admCdPrefix, int minPopulation) {
         String filePath = "csv/직장인구.csv";
         List<Map<String, Object>> filteredAreas = new ArrayList<>();
 
