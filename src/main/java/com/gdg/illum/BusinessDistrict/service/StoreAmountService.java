@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 import java.net.URI;
 
 @Component
-public class StoreListService {
+public class StoreAmountService {
 
     private final String URL;
     private final String SERVICE_KEY;
@@ -20,7 +20,7 @@ public class StoreListService {
     private static final String DIV_ID = "signguCd";
     private static final String TYPE = "json";
 
-    public StoreListService(@Value("${jun.store-list.request-url}") String url, @Value("${jun.store-list.service-key}") String serviceKey) {
+    public StoreAmountService(@Value("${jun.store-list.request-url}") String url, @Value("${jun.store-list.service-key}") String serviceKey) {
         this.URL = url;
         this.SERVICE_KEY = serviceKey;
     }
