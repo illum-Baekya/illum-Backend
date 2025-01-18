@@ -1,6 +1,6 @@
 package com.gdg.illum.BusinessDistrict.controller;
 
-import com.gdg.illum.BusinessDistrict.service.ResidentialPopulationService;
+import com.gdg.illum.BusinessDistrict.service.PopulationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,11 +12,11 @@ import java.util.Map;
 @RequestMapping("/api/population")
 public class PopulationController {
 
-    private final ResidentialPopulationService residentialPopulationService;
+    private final PopulationService populationService;
 
     @Autowired
-    public PopulationController(ResidentialPopulationService residentialPopulationService) {
-        this.residentialPopulationService = residentialPopulationService;
+    public PopulationController(PopulationService populationService) {
+        this.populationService = populationService;
     }
 
     @GetMapping
@@ -24,7 +24,7 @@ public class PopulationController {
             @RequestParam String year,
             @RequestParam String admCd
     ) {
-        return residentialPopulationService.getResidentialPopulation(year, admCd);
+        return populationService.getResidentialPopulation(year, admCd);
     }
 
     @GetMapping("/filter/working_population")
@@ -32,7 +32,7 @@ public class PopulationController {
             @RequestParam String admCdPrefix,
             @RequestParam int minPopulation) {
 
-        List<Map<String, Object>> result = residentialPopulationService.getFilteredWorkingPopulation(admCdPrefix, minPopulation);
+        List<Map<String, Object>> result = populationService.getFilteredWorkingPopulation(admCdPrefix, minPopulation);
         return ResponseEntity.ok(result);
     }
 
@@ -41,7 +41,7 @@ public class PopulationController {
             @RequestParam String admCdPrefix,
             @RequestParam int minPopulation) {
 
-        List<Map<String, Object>> result = residentialPopulationService.getFilteredFloatingPopulation(admCdPrefix, minPopulation);
+        List<Map<String, Object>> result = populationService.getFilteredFloatingPopulation(admCdPrefix, minPopulation);
 
         return ResponseEntity.ok(result);
     }
