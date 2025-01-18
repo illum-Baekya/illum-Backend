@@ -8,18 +8,18 @@ import java.util.List;
 import java.util.Map;
 
 @Service // Spring Service 어노테이션으로 이 클래스가 서비스 역할을 수행함을 명시
-public class PopulationIncomeMerger {
+public class ResidentialPopulationIncomeMerger {
 
     // 데이터를 병합하여 List<MergedRecord>로 반환하는 메서드
     public List<MergedRecord> mergeData(String populationFilePath, String incomeFilePath) {
         // PopulationStorage와 AverageIncomeStorage 객체를 파일 경로를 기반으로 초기화
-        PopulationStorage populationStorage = new PopulationStorage(populationFilePath);
+        ResidentialPopulationStorage residentialPopulationStorage = new ResidentialPopulationStorage(populationFilePath);
         AverageIncomeService incomeStorage = new AverageIncomeService(incomeFilePath);
 
         Map<String, MergedRecord> mergedMap = new HashMap<>(); // SIGNGU_CD별로 데이터를 병합하기 위한 맵 초기화
 
         // PopulationStorage 데이터를 SIGNGU_CD 기준으로 그룹화
-        for (PopulationStorage.PopulationRecord record : populationStorage.getPopulationMap().values()) {
+        for (ResidentialPopulationStorage.PopulationRecord record : residentialPopulationStorage.getPopulationMap().values()) {
             String signguCd = record.getCode().substring(0, 5); // SIGNGU_CD 추출 (앞 5자리)
             // 이미 병합된 기록이 있으면 가져오고, 없으면 새로 생성
             MergedRecord mergedRecord = mergedMap.getOrDefault(signguCd, new MergedRecord(record.getYear(), signguCd, record.getName(), 0, 0));
