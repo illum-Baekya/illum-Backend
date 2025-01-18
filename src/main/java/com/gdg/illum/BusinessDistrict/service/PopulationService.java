@@ -11,7 +11,7 @@ import java.util.*;
 @Service
 public class PopulationService {
 
-    private final String filePath = "src/main/java/com/gdg/illum/gwanghyeon/files/residential_population.csv";
+    private final String filePath = "src/main/resources/csv/residential_population.csv";
 
     /**
      * 고정된 파일에서 데이터를 읽어와 모든 컬럼을 반환
