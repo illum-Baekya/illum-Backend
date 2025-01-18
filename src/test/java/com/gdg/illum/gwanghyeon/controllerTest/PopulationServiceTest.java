@@ -1,6 +1,6 @@
 package com.gdg.illum.gwanghyeon.controllerTest;
 
-import com.gdg.illum.gwanghyeon.service.PopulationService;
+import com.gdg.illum.BusinessDistrict.service.PopulationService;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
