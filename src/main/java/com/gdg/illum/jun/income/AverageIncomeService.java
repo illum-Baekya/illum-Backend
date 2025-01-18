@@ -13,11 +13,11 @@ import java.util.*;
 
 @Slf4j
 @Component
-public class AverageIncomeStorage {
+public class AverageIncomeService {
 
     private final Map<String, Integer> averageIncomes = new HashMap<>();
 
-    public AverageIncomeStorage(@Value("${file.storage.path}") String rootFilePath) {
+    public AverageIncomeService(@Value("${file.storage.path}") String rootFilePath) {
 
         String filePath = rootFilePath + "\\average_income.csv";
 
