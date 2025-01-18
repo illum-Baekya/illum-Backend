@@ -1,5 +1,6 @@
 package com.gdg.illum.jun.store;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -10,14 +11,25 @@ import java.net.URI;
 @Component
 public class StoreListService {
 
-    private static final String URL = "http://apis.data.go.kr/B553077/api/open/sdsc2/storeListInDong";
-    private static final String SERVICE_KEY = "CvywT0zIK%2Fcwacxmb7mfWNxuy0k%2Fo%2FKonAqYJ7G1Lb2EOGr7iXJh66sm%2BUwqXB0DG2ETI%2BM22JoY4fO3xVTtiw%3D%3D";
+    private final String URL;
+    private final String SERVICE_KEY;
     private static final String PAGE_NO = "1";
     private static final String NUM_OF_ROWS = "1";
     private static final String DIV_ID = "signguCd";
     private static final String TYPE = "json";
 
-    public Integer getTotalAmountOfStoreBySignguCode(String code, StoreType storeType) {
+    public StoreListService(@Value("${jun.store-list.request-url}") String url, @Value("${jun.store-list.service-key}") String serviceKey) {
+        this.URL = url;
+        this.SERVICE_KEY = serviceKey;
+    }
+
+    /**
+     * 해당 시군구에 위치한 가게의 수를 반환하는 메서드
+     * @param code 시군구 코드
+     * @param storeType 가게 분류
+     * @return
+     */
+    public Integer getTotalAmountOfStoreByCode(String code, StoreType storeType) {
 
         StringBuilder urlBuilder = new StringBuilder(URL)
                 .append("?serviceKey=").append(SERVICE_KEY)
@@ -26,7 +38,7 @@ public class StoreListService {
                 .append("&divId=").append(DIV_ID)
                 .append("&type=").append(TYPE)
                 .append("&key=").append(code);
-        if (storeType != StoreType.NULL) {
+        if (storeType != null && storeType != StoreType.NULL) {
             urlBuilder.append("&indsLclsCd=").append(storeType.getCode());
         }
 

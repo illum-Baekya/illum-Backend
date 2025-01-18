@@ -1,10 +1,15 @@
 file:
   storage:
-    path: src/main/java/com/gdg/illum/jun/files
+    path: ${FILE_PATH}
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/younghan
-    username: younghan
-    password: younghan
+    url: ${DB_JDBC_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+jun:
+  store-list:
+    service-key: ${STORE_LIST_SERVICE_KEY}
+    request-url: ${STORE_LIST_REQUEST_URL}
