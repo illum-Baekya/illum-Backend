@@ -1,25 +1,36 @@
 package com.gdg.illum.gwanghyeon.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 
-@Service // Spring Bean으로 등록
+@Service
 public class PopulationService {
 
     private final RestTemplate restTemplate;
+    private final AccessTokenService accessTokenService;
 
-    public PopulationService(RestTemplate restTemplate) {
+    @Value("${api.populationUrl}")
+    private String populationApiUrl;
+
+    public PopulationService(RestTemplate restTemplate, AccessTokenService accessTokenService) {
         this.restTemplate = restTemplate;
+        this.accessTokenService = accessTokenService;
     }
 
-    public HashMap<String, Object> getResidentialPopulation(String accessToken, String year, String admCd) {
+    public HashMap<String, Object> getResidentialPopulation(String year, String admCd) {
+        String accessToken = accessTokenService.getAccessToken();
         String url = String.format(
-                "https://sgisapi.kostat.go.kr/OpenAPI3/stats/searchpopulation.json?accessToken=%s&year=%s&adm_cd=%s",
-                accessToken, year, admCd
+                "%s?accessToken=%s&year=%s&adm_cd=%s",
+                populationApiUrl, accessToken, year, admCd
         );
 
-        return restTemplate.getForObject(url, HashMap.class);
+        try {
+            return restTemplate.getForObject(url, HashMap.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch residential population data: " + e.getMessage(), e);
+        }
     }
 }

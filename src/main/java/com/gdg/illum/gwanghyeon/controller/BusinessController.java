@@ -10,15 +10,17 @@ import java.util.HashMap;
 @RequestMapping("/api/businesses")
 public class BusinessController {
 
-    @Autowired
-    private BusinessService businessService;
+    private final BusinessService businessService;
 
-    // 사업체 통계 데이터 API
+    @Autowired
+    public BusinessController(BusinessService businessService) {
+        this.businessService = businessService;
+    }
+
     @GetMapping
     public HashMap<String, Object> getNearbyBusinesses(
-            @RequestParam String accessToken,
             @RequestParam String year,
             @RequestParam String admCd) {
-        return businessService.getNearbyBusinesses(accessToken, year, admCd);
+        return businessService.getNearbyBusinesses(year, admCd);
     }
 }

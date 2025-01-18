@@ -10,16 +10,17 @@ import java.util.HashMap;
 @RequestMapping("/api/population")
 public class PopulationController {
 
-    // 의존성 주입
-    @Autowired
-    private PopulationService populationService;
+    private final PopulationService populationService;
 
-    // 주거인구 데이터 API
+    @Autowired
+    public PopulationController(PopulationService populationService) {
+        this.populationService = populationService;
+    }
+
     @GetMapping
     public HashMap<String, Object> getResidentialPopulation(
-            @RequestParam String accessToken,
             @RequestParam String year,
             @RequestParam String admCd) {
-        return populationService.getResidentialPopulation(accessToken, year, admCd);
+        return populationService.getResidentialPopulation(year, admCd);
     }
 }
