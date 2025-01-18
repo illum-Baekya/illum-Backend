@@ -3,7 +3,6 @@ package com.gdg.illum.BusinessDistrict.service;
 import com.opencsv.CSVReader;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -116,36 +115,51 @@ public class PopulationService {
     }
 
     public List<Map<String, Object>> getFilteredFloatingPopulation(String admCdPrefix, int minPopulation) {
-        String filePath = "csv/유동인구.csv";
+        String filePath = "csv/유동인구2.csv";
 
-        try (CSVReader reader = new CSVReader(new InputStreamReader(new ClassPathResource(filePath).getInputStream()))) {
+        try (CSVReader reader = new CSVReader(new InputStreamReader(new ClassPathResource(filePath).getInputStream(), StandardCharsets.UTF_8))) {
             List<Map<String, Object>> results = new ArrayList<>();
             String[] columns;
+
             reader.readNext();
 
             while ((columns = reader.readNext()) != null) {
-                String admCdFull = columns[8].trim();
-                String admNm = columns[9].trim();
-                String populationStr = columns[14].trim();
+                if (columns.length < 6) {
+                    System.out.println("유효하지 않은 데이터 행 건너뜀: " + Arrays.toString(columns));
+                    continue;
+                }
+
+                String admCdFull = columns[1].trim();
+                String admNm = columns[2].trim();
+                String popCountStr = columns[5].trim();
 
                 try {
-                    int totalFloatingPopulation = Integer.parseInt(populationStr);
+                    int popCount = parsePopulation(popCountStr);
 
-                    if (admCdFull.startsWith(admCdPrefix) && totalFloatingPopulation > minPopulation) {
+                    if (admCdFull.startsWith(admCdPrefix) && popCount > minPopulation) {
                         Map<String, Object> result = new HashMap<>();
                         result.put("adm_cd", admCdFull);
                         result.put("adm_nm", admNm);
-                        result.put("total_floating_population", totalFloatingPopulation);
+                        result.put("pop_count", popCount);
                         results.add(result);
                     }
-                } catch (NumberFormatException e) {
-                    System.out.println("인구수 데이터 변환 실패: " + populationStr);
+                } catch (Exception e) {
+                    System.out.println("인구수 데이터 처리 중 오류 발생: " + Arrays.toString(columns));
                 }
             }
 
             return results;
         } catch (Exception e) {
             throw new RuntimeException("CSV 파일 처리 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
+
+    private int parsePopulation(String populationStr) {
+        try {
+            String sanitized = populationStr.replace(",", "").trim();
+            return Integer.parseInt(sanitized);
+        } catch (NumberFormatException e) {
+            return 0;
         }
     }
 }
