@@ -94,13 +94,8 @@ public class PopulationIncomeMerger {
         // MergedRecord 객체를 문자열로 표현하는 메서드
         @Override
         public String toString() {
-            return "MergedRecord{" +
-                    "year='" + year + '\'' +
-                    ", signguCd='" + signguCd + '\'' +
-                    ", signguName='" + signguName + '\'' +
-                    ", totalPopulation=" + totalPopulation +
-                    ", averageIncomePrice=" + averageIncomePrice +
-                    '}';
+            return "[" + year + ", " + signguCd + ", " + signguName + ", " + totalPopulation + ", " + averageIncomePrice + "]";
         }
+
     }
 }
