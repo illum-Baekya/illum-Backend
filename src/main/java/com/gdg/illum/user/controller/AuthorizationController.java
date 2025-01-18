@@ -5,7 +5,6 @@ import com.gdg.illum.user.dto.TokenDto;
 import com.gdg.illum.user.dto.UserSignInRequestDto;
 import com.gdg.illum.user.dto.UserSignUpRequestDto;
 import com.gdg.illum.user.jwt.TokenProvider;
-import com.gdg.illum.user.jwt.TokenType;
 import com.gdg.illum.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

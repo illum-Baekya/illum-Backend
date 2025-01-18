@@ -2,14 +2,17 @@ package com.gdg.illum.BusinessDistrict.service;
 
 import com.gdg.illum.BusinessDistrict.domain.DistrictAverageIncomeInformation;
 import com.gdg.illum.BusinessDistrict.domain.DistrictStoreAmountInformation;
-import com.gdg.illum.BusinessDistrict.dto.res.StoreListInfoDto;
 import com.gdg.illum.BusinessDistrict.domain.StoreType;
+import com.gdg.illum.BusinessDistrict.dto.res.StoreListInfoDto;
 import com.gdg.illum.BusinessDistrict.service.utils.CodeUtil;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import com.google.gson.Gson;
 
 import java.net.URI;
 import java.util.ArrayList;

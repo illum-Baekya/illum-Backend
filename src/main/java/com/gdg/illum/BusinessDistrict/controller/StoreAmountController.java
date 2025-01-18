@@ -1,6 +1,5 @@
 package com.gdg.illum.BusinessDistrict.controller;
 
-import com.gdg.illum.BusinessDistrict.domain.DistrictAverageIncomeInformation;
 import com.gdg.illum.BusinessDistrict.domain.DistrictStoreAmountInformation;
 import com.gdg.illum.BusinessDistrict.domain.StoreType;
 import com.gdg.illum.BusinessDistrict.service.StoreAmountService;

@@ -3,6 +3,7 @@ package com.gdg.illum.BusinessDistrict.service;
 import com.opencsv.CSVReader;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -15,9 +16,6 @@ public class PopulationService {
 
     private final String filePath = "src/main/resources/csv/residential_population.csv";
 
-    /**
-     * 고정된 파일에서 데이터를 읽어와 모든 컬럼을 반환
-     */
     public List<Map<String, String>> getResidentialPopulation(String year, String admCd) {
         File file = new File(filePath);
         if (!file.exists()) {
@@ -26,9 +24,6 @@ public class PopulationService {
         return parseCsvFile(file, year, admCd);
     }
 
-    /**
-     * 특정 CSV 파일에서 데이터를 읽고 모든 컬럼을 반환
-     */
     private List<Map<String, String>> parseCsvFile(File file, String year, String admCd) {
         List<Map<String, String>> rows = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
@@ -37,7 +32,6 @@ public class PopulationService {
                 throw new RuntimeException("CSV 파일이 비어 있습니다.");
             }
 
-            // 헤더 파싱 및 컬럼 인덱스 매핑
             String[] headers = headerLine.split("\t");
             Map<String, Integer> columnIndexMap = getColumnIndexMap(headers);
 
@@ -45,10 +39,9 @@ public class PopulationService {
             while ((line = br.readLine()) != null) {
                 String[] tokens = line.split("\t");
                 if (tokens.length != headers.length) {
-                    continue; // 잘못된 데이터 행은 건너뜀
+                    continue;
                 }
 
-                // year와 admCd 필터링
                 if (year.equals(tokens[columnIndexMap.get("STRD_YR_CD")].trim())
                         && admCd.equals(tokens[columnIndexMap.get("ADSTRD_CD")].trim())) {
                     Map<String, String> row = new HashMap<>();
@@ -65,9 +58,6 @@ public class PopulationService {
         return rows;
     }
 
-    /**
-     * 헤더 배열에서 컬럼 이름과 인덱스 매핑
-     */
     private Map<String, Integer> getColumnIndexMap(String[] headers) {
         Map<String, Integer> columnIndexMap = new HashMap<>();
         for (int i = 0; i < headers.length; i++) {
