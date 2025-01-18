@@ -8,7 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 @Builder
-public class DistrictPopulationInformation {
+public class DistrictResidentialPopulationInformation {
 
     @SerializedName("year")
     private final String year; // 데이터 연도

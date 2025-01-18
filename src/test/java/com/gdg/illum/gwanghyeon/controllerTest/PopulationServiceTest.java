@@ -1,6 +1,6 @@
 package com.gdg.illum.gwanghyeon.controllerTest;
 
-import com.gdg.illum.BusinessDistrict.service.PopulationService;
+import com.gdg.illum.BusinessDistrict.service.ResidentialPopulationService;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,14 +13,14 @@ class PopulationServiceTest {
     @Test
     void testGetResidentialPopulation() {
         // PopulationService 인스턴스 생성
-        PopulationService populationService = new PopulationService();
+        ResidentialPopulationService residentialPopulationService = new ResidentialPopulationService();
 
         // 테스트 데이터
         String year = "2024";
         String admCd = "11110515"; // CSV에 존재하는 행정동코드 (존재한다고 가정)
 
         // 서비스 호출
-        List<Map<String, String>> response = populationService.getResidentialPopulation(year, admCd);
+        List<Map<String, String>> response = residentialPopulationService.getResidentialPopulation(year, admCd);
 
         // 결과 출력 및 검증
         System.out.println("PopulationService Response: " + response);

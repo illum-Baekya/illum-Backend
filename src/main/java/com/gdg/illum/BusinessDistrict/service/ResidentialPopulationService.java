@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
-public class PopulationService {
+public class ResidentialPopulationService {
 
     private final String filePath = "src/main/resources/csv/residential_population.csv";
 
